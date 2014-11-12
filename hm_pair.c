@@ -44,19 +44,19 @@ HMPair *hm_pair_create(const char*key, const char*val, unsigned long int expires
 	pair->keylen	= keylen;
 	pair->vallen	= vallen;
 
-	strncpy(& pair->buffer[0     ], key, keylen);
-	strncpy(& pair->buffer[keylen], val, vallen);
+	memcpy(& pair->buffer[0     ], key, keylen);
+	memcpy(& pair->buffer[keylen], val, vallen);
 
 	//pair->buffer[keylen + vallen] = '\0';
 
 	return pair;
 };
 
-static const char *_hm_pair_sub(const HMPair *pair, char *buffer, unsigned int len, unsigned int start, unsigned int len2){
-	len2 = MIN(len2, len - 1);
+static const char *_hm_pair_sub(const HMPair *pair, char *buffer, unsigned int len, unsigned int data_start, unsigned int data_len){
+	data_len = MIN(data_len, len - 1);
 
-	strncpy(buffer, & pair->buffer[ start ], len2);
-	buffer[len2] = '\0';
+	memcpy(buffer, & pair->buffer[ data_start ], data_len);
+	buffer[data_len] = '\0';
 
 	return buffer;
 }
@@ -80,6 +80,19 @@ inline int hm_pair_equals(const HMPair *pair, const char *key){
 	if (pair == NULL || key == NULL)
 		return 0;
 
-	return strncmp(& pair->buffer[0], key, pair->keylen) == 0;
+	if (pair->keylen != strlen(key))
+		return 0;
+
+	return ! memcmp(& pair->buffer[0], key, pair->keylen);
+}
+
+inline int hm_pair_equalp(const HMPair *pair1, const HMPair *pair2){
+	if (pair1 == NULL || pair2 == NULL)
+		return 0;
+
+	if (pair1->keylen != pair2->keylen)
+		return 0;
+
+	return ! memcmp(& pair1->buffer[0], & pair2->buffer[0], pair1->keylen);
 }
 

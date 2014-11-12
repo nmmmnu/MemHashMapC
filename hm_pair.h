@@ -1,5 +1,5 @@
 #ifndef _HM_PAIR_H
-#define _HM_AIR_H
+#define _HM_PAIR_H
 
 #include <stdint.h>
 
@@ -16,6 +16,7 @@ struct HMPair *hm_pair_create(const char*key, const char*val, unsigned long int 
 inline const char *hm_pair_getkey(const HMPair *pair, char *buffer, unsigned int len);
 inline const char *hm_pair_getval(const HMPair *pair, char *buffer, unsigned int len);
 inline int hm_pair_equals(const HMPair *pair, const char *key);
+inline int hm_pair_equalp(const HMPair *pair1, const HMPair *pair2);
 
 int hm_pair_valid(const HMPair *pair);
 int hm_pair_expired(const HMPair *pair);

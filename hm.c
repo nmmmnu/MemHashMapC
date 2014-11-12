@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 
 #define hash(a) hm_hash(a)
 
@@ -97,7 +98,7 @@ int main(int argc, char **argv){
 
 	HM *table = hm_create(CAPACITY);
 
-	printf("%llu\n", table->buckets[123].count);
+	printf("%" PRIu64 "\n", table->buckets[123].count);
 //	printf("%u\n", _hm_getbucketforkey(table, "hello1"));
 
 	hm_free(table);
