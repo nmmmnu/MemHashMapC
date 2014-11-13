@@ -44,6 +44,7 @@ HMPair *hm_pair_create(const char*key, const char*val, unsigned long int expires
 	pair->keylen	= keylen;
 	pair->vallen	= vallen;
 
+	// memcpy so we can switch to blobs later...
 	memcpy(& pair->buffer[0     ], key, keylen);
 	memcpy(& pair->buffer[keylen], val, vallen);
 
@@ -51,6 +52,10 @@ HMPair *hm_pair_create(const char*key, const char*val, unsigned long int expires
 
 	return pair;
 };
+
+inline int hm_pair_free(HMPair *pair){
+	free(pair);
+}
 
 static const char *_hm_pair_sub(const HMPair *pair, char *buffer, unsigned int len, unsigned int data_start, unsigned int data_len){
 	data_len = MIN(data_len, len - 1);

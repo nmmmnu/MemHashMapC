@@ -167,17 +167,13 @@ uint64_t hm_bucket_count(const HMBucket *bucket){
 }
 
 
-int hm_bucket_free(HMBucket *bucket){
+int hm_bucket_freepairs(HMBucket *bucket){
 	if (bucket->count == 0)
 		return 0;
 
 	uint64_t i;
-	for(i = 0; i < bucket->count; i++){
-		HMPair *pair = bucket->pairs[i];
-
-		if (pair)
-			free(pair);
-	}
+	for(i = 0; i < bucket->count; i++)
+		free( bucket->pairs[i] );
 
 	free(bucket->pairs);
 

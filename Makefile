@@ -3,7 +3,7 @@ LINK = gcc -o
 
 
 
-all: test_hm
+all: test_hm test_hm_file
 
 
 
@@ -12,11 +12,24 @@ clean:
 
 
 
+malloc_info.o: malloc_info.c malloc_info.h
+	$(CC) malloc_info.c
+
+
+
 test_hm: test_hm.o hm_pair.o hm_bucket.o hm.o
 	$(LINK) test_hm test_hm.o hm_pair.o hm_bucket.o hm.o
 
 test_hm.o: test_hm.c hm_pair.h hm_bucket.h hm.h
 	$(CC) test_hm.c
+
+
+
+test_hm_file: test_hm_file.o hm_pair.o hm_bucket.o hm.o malloc_info.o
+	$(LINK) test_hm_file test_hm_file.o hm_pair.o hm_bucket.o hm.o malloc_info.o
+
+test_hm_file.o: test_hm_file.c hm_pair.h hm_bucket.h hm.h
+	$(CC) test_hm_file.c
 
 
 

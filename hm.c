@@ -38,7 +38,12 @@ HM *hm_create(uint64_t capacity){
 
 
 int hm_free(HM *table){
-	// giant memory leak here :)
+	uint64_t i;
+	for(i = 0; i < table->capacity; i++){
+		HMBucket *bucket = & table->buckets[i];
+
+		hm_bucket_freepairs(bucket);
+	}
 
 	free(table);
 

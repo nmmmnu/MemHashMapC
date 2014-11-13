@@ -11,7 +11,7 @@ typedef struct HMBucket{
 	HMPair **	pairs;	// pointer to array of pointers
 } HMBucket;
 
-int hm_bucket_free(HMBucket *bucket);
+int hm_bucket_freepairs(HMBucket *bucket);
 
 inline int hm_bucket_exists(const HMBucket *bucket, const char *key);
 

@@ -79,14 +79,14 @@ void hm_bucket_test(){
 
 	PRINTF_TEST("HMBucket", "count",	hm_bucket_count(bucket) == 0				);
 
-	PRINTF_TEST("HMBucket", "free",		hm_bucket_free(bucket) == 0				);
+	PRINTF_TEST("HMBucket", "free",		hm_bucket_freepairs(bucket) == 0			);
 
 	// add some more pairs to test hm_bucket_free() with data
 	hm_bucket_put(bucket, hm_pair_create("name",	"niki",		0));
 	hm_bucket_put(bucket, hm_pair_create("age",	"5",		0));
 	hm_bucket_put(bucket, hm_pair_create("lang",	"C/C++",	0));
 
-	PRINTF_TEST("HMBucket", "free",		hm_bucket_free(bucket)					);
+	PRINTF_TEST("HMBucket", "free",		hm_bucket_freepairs(bucket)				);
 }
 
 

@@ -11,7 +11,8 @@ typedef struct HMPair{
 	char		buffer[];
 }HMPair;
 
-struct HMPair *hm_pair_create(const char*key, const char*val, unsigned long int expires);
+HMPair *hm_pair_create(const char*key, const char*val, unsigned long int expires);
+inline int hm_pair_free(HMPair *pair);
 
 inline const char *hm_pair_getkey(const HMPair *pair, char *buffer, unsigned int len);
 inline const char *hm_pair_getval(const HMPair *pair, char *buffer, unsigned int len);
