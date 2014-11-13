@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 #define PRINT_BUFFER_SIZE 20
 #define PRINT_FORMAT "| %10u | %-20s | %-20s |\n"
@@ -23,7 +24,7 @@ static uint64_t _hm_bucket_getpairid(const HMBucket *bucket, const HMPair *chkpa
 }
 
 
-static int _hm_bucket_getpairids(const HMBucket *bucket, const char *key){
+static uint64_t _hm_bucket_getpairids(const HMBucket *bucket, const char *key){
 	if (key == NULL)
 		return 0;
 
@@ -44,6 +45,18 @@ inline int hm_bucket_exists(const HMBucket *bucket, const char *key){
 	return _hm_bucket_getpairids(bucket, key) ? 1 : 0;
 }
 
+HMPair *hm_bucket_get(HMBucket *bucket, const char *key){
+	if (key == 0)
+		return NULL;
+
+	// is key already in the bucket?
+	const uint64_t pos = _hm_bucket_getpairids(bucket, key);
+
+	if (pos == 0)
+		return NULL;
+
+	return bucket->pairs[pos - 1];
+}
 
 int hm_bucket_put(HMBucket *bucket, HMPair *newpair){
 	if (newpair == NULL)
@@ -182,7 +195,7 @@ void hm_bucket_print(const HMBucket *bucket){
 	printf("Print bucket %p\n", bucket);
 	printf("\n");
 
-	printf("Pairs count = %llu\n", (unsigned long long int) bucket->count);
+	printf("Pairs count = %" PRIu64 "\n", bucket->count);
 	printf("\n");
 
 	if (bucket->count == 0){
@@ -205,7 +218,5 @@ void hm_bucket_print(const HMBucket *bucket){
 			hm_pair_getval(pair, buffer2, PRINT_BUFFER_SIZE)
 		);
 	}
-
-	printf("\n");
 }
 
