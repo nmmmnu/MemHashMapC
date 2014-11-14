@@ -31,8 +31,8 @@ int hm_pair_expired(const HMPair *pair){
 }
 
 HMPair *hm_pair_create(const char*key, const char*val, unsigned long int expires){
-	unsigned int keylen = strlen(key);
-	unsigned int vallen = strlen(val);
+	size_t keylen = strlen(key);
+	size_t vallen = strlen(val);
 
 	HMPair *pair = malloc( sizeof(HMPair) + keylen + vallen); // + 1
 
@@ -55,9 +55,11 @@ HMPair *hm_pair_create(const char*key, const char*val, unsigned long int expires
 
 inline int hm_pair_free(HMPair *pair){
 	free(pair);
+
+	return 1;
 }
 
-static const char *_hm_pair_sub(const HMPair *pair, char *buffer, unsigned int len, unsigned int data_start, unsigned int data_len){
+static const char *_hm_pair_sub(const HMPair *pair, char *buffer, size_t len, size_t data_start, size_t data_len){
 	data_len = MIN(data_len, len - 1);
 
 	memcpy(buffer, & pair->buffer[ data_start ], data_len);
@@ -67,14 +69,14 @@ static const char *_hm_pair_sub(const HMPair *pair, char *buffer, unsigned int l
 }
 
 
-inline const char *hm_pair_getkey(const HMPair *pair, char *buffer, unsigned int len){
+inline const char *hm_pair_getkey(const HMPair *pair, char *buffer, size_t len){
 	if (pair == NULL)
 		return NULL;
 
 	return _hm_pair_sub(pair, buffer, len, 0, pair->keylen);
 }
 
-inline const char *hm_pair_getval(const HMPair *pair, char *buffer, unsigned int len){
+inline const char *hm_pair_getval(const HMPair *pair, char *buffer, size_t len){
 	if (pair == NULL)
 		return NULL;
 

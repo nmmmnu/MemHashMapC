@@ -92,7 +92,7 @@ void processfile(HM *table, const char *filename, int op){
 
 
 char *trim(char *s){
-	unsigned int i;
+	size_t i;
 	for(i = strlen(s); i > 0; i--)
 		if (isspace(s[i]) || s[i] == '\0')
 			s[i] = '\0';

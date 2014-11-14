@@ -119,7 +119,7 @@ void hm_table_test(){
 
 
 #define PRINTF_SIZE_STR(a) # a
-#define PRINTF_SIZE(a) printf("size of %-14s = %3lu bytes\n", PRINTF_SIZE_STR(a), sizeof(a))
+#define PRINTF_SIZE(a) printf("size of %-14s = %3zu bytes\n", PRINTF_SIZE_STR(a), sizeof(a))
 
 void hm_print_sizes(){
 	printf("\nSizes:\n");
