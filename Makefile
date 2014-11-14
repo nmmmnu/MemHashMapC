@@ -17,18 +17,18 @@ malloc_info.o: malloc_info.c malloc_info.h
 
 
 
-test_hm: test_hm.o hm_pair.o hm_bucket.o hm.o malloc_info.o
-	$(LINK) test_hm test_hm.o hm_pair.o hm_bucket.o hm.o malloc_info.o
+test_hm: test_hm.o hm_pair.o hm_list.o hm.o malloc_info.o
+	$(LINK) test_hm test_hm.o hm_pair.o hm_list.o hm.o malloc_info.o
 
-test_hm.o: test_hm.c hm_pair.h hm_bucket.h hm.h malloc_info.h
+test_hm.o: test_hm.c hm_pair.h hm_list.h hm.h malloc_info.h
 	$(CC) test_hm.c
 
 
 
-test_hm_file: test_hm_file.o hm_pair.o hm_bucket.o hm.o malloc_info.o
-	$(LINK) test_hm_file test_hm_file.o hm_pair.o hm_bucket.o hm.o malloc_info.o
+test_hm_file: test_hm_file.o hm_pair.o hm_list.o hm.o malloc_info.o
+	$(LINK) test_hm_file test_hm_file.o hm_pair.o hm_list.o hm.o malloc_info.o
 
-test_hm_file.o: test_hm_file.c hm_pair.h hm_bucket.h hm.h
+test_hm_file.o: test_hm_file.c hm_pair.h hm_list.h hm.h
 	$(CC) test_hm_file.c
 
 
@@ -38,12 +38,12 @@ hm_pair.o: hm_pair.c hm_pair.h
 
 
 
-hm_bucket.o: hm_bucket.c hm_bucket.h hm_pair.h
-	$(CC) hm_bucket.c
+hm_list.o: hm_list.c hm_list.h hm_pair.h
+	$(CC) hm_list.c
 
 
 
-hm.o: hm.c hm.h hm_bucket.h hm_pair.h
+hm.o: hm.c hm.h hm_list.h hm_pair.h
 	$(CC) hm.c
 
 
