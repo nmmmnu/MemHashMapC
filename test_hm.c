@@ -2,6 +2,8 @@
 #include "hm_bucket.h"
 #include "hm.h"
 
+#include "malloc_info.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -50,69 +52,68 @@ void hm_pair_test(const int delay){
 }
 
 
-void hm_bucket_test(){
-	HMBucket bucket2 = {0, NULL};
-	HMBucket *bucket = & bucket2;
+void hm_list_test(){
+	HMPair *bucket[1];
+	bucket[0] = NULL;
 
-	hm_bucket_put(bucket, hm_pair_create("name",	"niki",		0));
-	hm_bucket_put(bucket, hm_pair_create("age",	"5",		0));
-	hm_bucket_put(bucket, hm_pair_create("lang",	"C/C++",	0));
+	hm_list_put(bucket, hm_pair_create("name",	"niki",		0));
+	hm_list_put(bucket, hm_pair_create("age",	"5",		0));
+	hm_list_put(bucket, hm_pair_create("lang",	"C/C++",	0));
+	hm_list_put(bucket, hm_pair_create("first",	"list top",	0));
 
-	PRINTF_TEST("HMBucket", "count",	hm_bucket_count(bucket) == 3				);
-	PRINTF_TEST("HMBucket", "exists",	hm_bucket_exists(bucket, "name")			);
-	PRINTF_TEST("HMBucket", "! exists",	! hm_bucket_exists(bucket, "computer")			);
+	PRINTF_TEST("HMBucket", "count",	hm_list_count(bucket) == 3				);
+	PRINTF_TEST("HMBucket", "exists",	hm_list_exists(bucket, "name")				);
+	PRINTF_TEST("HMBucket", "! exists",	! hm_list_exists(bucket, "computer")			);
 
-	PRINTF_TEST("HMBucket", "! get",	hm_bucket_get(bucket, "computer") == NULL		);
-	HMPair *pair = hm_bucket_get(bucket, "name");
+	PRINTF_TEST("HMBucket", "! get",	hm_list_get(bucket, "computer") == NULL			);
+	const HMPair *pair = hm_list_get(bucket, "name");
 	PRINTF_TEST("HMBucket", "get",		hm_pair_equals(pair, "name")				);
 
-	hm_bucket_print(bucket);
+	hm_list_print(bucket);
 
-	hm_bucket_remove(bucket, NULL);
-	hm_bucket_remove(bucket, "computer");
-	hm_bucket_remove(bucket, "lang");
+	hm_list_remove(bucket, NULL);
+	hm_list_remove(bucket, "computer");
+	hm_list_remove(bucket, "first"); // remove first element of the linked list
+	hm_list_remove(bucket, "lang");
 
-	PRINTF_TEST("HMBucket", "count",	hm_bucket_count(bucket) == 2				);
+	PRINTF_TEST("HMBucket", "count",	hm_list_count(bucket) == 2				);
 
-	hm_bucket_remove(bucket, "name");
-	hm_bucket_remove(bucket, "age");
+	hm_list_remove(bucket, "name");
+	hm_list_remove(bucket, "age");
 
-	PRINTF_TEST("HMBucket", "count",	hm_bucket_count(bucket) == 0				);
+	PRINTF_TEST("HMBucket", "count",	hm_list_count(bucket) == 0				);
 
-	PRINTF_TEST("HMBucket", "free",		hm_bucket_freepairs(bucket) == 0			);
+	PRINTF_TEST("HMBucket", "free",		hm_list_free(bucket) 					);
 
-	// add some more pairs to test hm_bucket_free() with data
-	hm_bucket_put(bucket, hm_pair_create("name",	"niki",		0));
-	hm_bucket_put(bucket, hm_pair_create("age",	"5",		0));
-	hm_bucket_put(bucket, hm_pair_create("lang",	"C/C++",	0));
+	// add some more pairs to test hm_list_free() with data
+	hm_list_put(bucket, hm_pair_create("name",	"niki",		0));
+	hm_list_put(bucket, hm_pair_create("age",	"5",		0));
+	hm_list_put(bucket, hm_pair_create("lang",	"C/C++",	0));
 
-	PRINTF_TEST("HMBucket", "free",		hm_bucket_freepairs(bucket)				);
+	PRINTF_TEST("HMBucket", "free",		hm_list_free(bucket)					);
 }
 
 
 void hm_table_test(){
-	const uint64_t capacity = 2;
+	const uint64_t capacity = 3;
 	HM *table = hm_create(capacity);
 
 	hm_put(table, hm_pair_create("name",	"niki",		0));
 	hm_put(table, hm_pair_create("age",	"5",		0));
 	hm_put(table, hm_pair_create("lang",	"C/C++",	0));
+	hm_put(table, hm_pair_create("os",	"Linux",	0));
 
 	PRINTF_TEST("HM", "exists",	hm_exists(table, "name")		);
 	PRINTF_TEST("HM", "! exists",	! hm_exists(table, "computer")		);
 
 	PRINTF_TEST("HM", "! get",	hm_get(table, "computer") == NULL	);
-	HMPair *pair = hm_get(table, "name");
+	const HMPair *pair = hm_get(table, "name");
 	PRINTF_TEST("HM", "get",	hm_pair_equals(pair, "name")		);
-
-	hm_print(table, 1);
 
 	hm_remove(table, "name");
 	hm_remove(table, "age");
-	hm_remove(table, "lang");
 
-	hm_print(table, 0);
-
+	hm_print(table, 1);
 
 	hm_free(table);
 }
@@ -122,7 +123,8 @@ void hm_table_test(){
 #define PRINTF_SIZE(a) printf("size of %-14s = %3zu bytes\n", PRINTF_SIZE_STR(a), sizeof(a))
 
 void hm_print_sizes(){
-	printf("\nSizes:\n");
+	printf("\n");
+	printf("Sizes:\n");
 
 	PRINTF_SIZE(short int);
 	PRINTF_SIZE(int);
@@ -133,7 +135,6 @@ void hm_print_sizes(){
 	PRINTF_SIZE(uint32_t);
 	PRINTF_SIZE(uint64_t);
 	PRINTF_SIZE(HMPair);
-	PRINTF_SIZE(HMBucket);
 	PRINTF_SIZE(HM);
 }
 
@@ -142,13 +143,15 @@ void hm_print_sizes(){
 
 
 int main(int argc, char **argv){
-	hm_pair_test(0);
+//	hm_pair_test(0);
 
-	hm_bucket_test();
+//	hm_list_test();
 
 	hm_table_test();
 
 	hm_print_sizes();
+
+	display_mallinfo();
 
 	return 0;
 }

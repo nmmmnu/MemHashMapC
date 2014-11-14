@@ -10,6 +10,7 @@
 #define BUFFER_SIZE 1024
 
 
+// DJB Hash function from CDB
 unsigned long int hm_hash(const char *str){
 	unsigned long hash = 5381;
 
@@ -24,14 +25,21 @@ unsigned long int hm_hash(const char *str){
 
 
 HM *hm_create(uint64_t capacity){
-	HM *table = malloc( sizeof(HM) + sizeof(HMBucket) * capacity);
+	HM *table = malloc(sizeof(HM) + sizeof(HMPair *) * capacity);
 
 	if (table == NULL)
 		return NULL;
 
 	table->capacity = capacity;
 
-	memset(table->buckets, 0, sizeof(HMBucket) * capacity);
+	/*
+	uint64_t i;
+	for(i = 0; i < capacity; i++){
+		table->buckets[i] = NULL;
+	}
+	*/
+
+	memset(table->buckets, 0, sizeof(HMPair *) * capacity);
 
 	return table;
 };
@@ -40,9 +48,7 @@ HM *hm_create(uint64_t capacity){
 int hm_free(HM *table){
 	uint64_t i;
 	for(i = 0; i < table->capacity; i++){
-		HMBucket *bucket = & table->buckets[i];
-
-		hm_bucket_freepairs(bucket);
+		hm_list_free( & table->buckets[i] );
 	}
 
 	free(table);
@@ -63,18 +69,18 @@ int hm_exists(HM *table, const char *key){
 	if (key == 0)
 		return 0;
 
-	uint64_t index = _hm_getbucketforkey(table, key );
+	const uint64_t index = _hm_getbucketforkey(table, key);
 
 	if (index == 0)
 		return 0;
 
-	HMBucket *bucket = & table->buckets[index - 1];
+	HMPair **bucket = & table->buckets[index - 1];
 
-	return hm_bucket_exists(bucket, key);
+	return hm_list_exists(bucket, key);
 }
 
 
-HMPair *hm_get(HM *table, const char *key){
+const HMPair *hm_get(HM *table, const char *key){
 	if (key == 0)
 		return NULL;
 
@@ -83,9 +89,9 @@ HMPair *hm_get(HM *table, const char *key){
 	if (index == 0)
 		return NULL;
 
-	HMBucket *bucket = & table->buckets[index - 1];
+	HMPair **bucket = & table->buckets[index - 1];
 
-	return hm_bucket_get(bucket, key);
+	return hm_list_get(bucket , key);
 }
 
 
@@ -105,9 +111,9 @@ int hm_put(HM *table, HMPair *pair){
 	if (index == 0)
 		return 0;
 
-	HMBucket *bucket = & table->buckets[index - 1];
+	HMPair **bucket = & table->buckets[index - 1];
 
-	if (hm_bucket_put(bucket, pair))
+	if (hm_list_put(bucket, pair))
 		return 1;
 
 	free(pair);
@@ -124,33 +130,27 @@ int hm_remove(HM *table, const char *key){
 	if (index == 0)
 		return 0;
 
-	HMBucket *bucket = & table->buckets[index - 1];
+	HMPair **bucket = & table->buckets[index - 1];
 
-	return hm_bucket_remove(bucket, key);
+	return hm_list_remove(bucket, key);
 }
 
 
-void hm_print(const HM *table, int all){
+void hm_print(HM *table, int all){
 	printf("\n");
 	printf("HM Table %p\n", table);
 	printf("\n");
 	printf("Capacity = %" PRIu64 "\n", table->capacity);
 	printf("\n");
 
-	uint64_t sum = 0;
+	if (! all)
+		return;
+
 	uint64_t i;
 	for(i = 0; i < table->capacity; i++){
-		const HMBucket *bucket = & table->buckets[i];
-
-		printf("| Bucket # %10" PRIu64 " | Pairs: %10" PRIu64 " |\n", i, bucket->count);
-		sum += bucket->count;
-
-		if (all)
-			hm_bucket_print(bucket);
+		hm_list_print( & table->buckets[i] );
 	}
 
 	printf("\n");
-
-	printf("Total %" PRIu64 " (eventual) pairs...\n", sum);
 }
 

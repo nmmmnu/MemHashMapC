@@ -8,10 +8,9 @@
 #include <string.h>
 #include <ctype.h>
 
-
 #define MAX 1024
 
-#define BUCKETS 1000 * 1000
+#define BUCKETS 1 * 1000 * 1000
 
 void processfile(HM *table, const char *filename, int op);
 char *trim(char *s);
@@ -32,7 +31,7 @@ int main(int argc, char **argv){
 	printf("Load file\n");
 	processfile(table, filename, 0);
 
-	HMPair *pair = hm_get(table, findkey);
+	const HMPair *pair = hm_get(table, findkey);
 
 	if (pair == NULL)
 		printf("Key %s not found\n", findkey);
@@ -81,7 +80,7 @@ void processfile(HM *table, const char *filename, int op){
 		}
 
 		i++;
-		if (i % ( 100 * 1000 ) == 0)
+		if (i % ( 10 * 1000 * 1000 ) == 0)
 			printf("Processed %10u...\n", i);
 	}
 

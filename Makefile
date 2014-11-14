@@ -17,10 +17,10 @@ malloc_info.o: malloc_info.c malloc_info.h
 
 
 
-test_hm: test_hm.o hm_pair.o hm_bucket.o hm.o
-	$(LINK) test_hm test_hm.o hm_pair.o hm_bucket.o hm.o
+test_hm: test_hm.o hm_pair.o hm_bucket.o hm.o malloc_info.o
+	$(LINK) test_hm test_hm.o hm_pair.o hm_bucket.o hm.o malloc_info.o
 
-test_hm.o: test_hm.c hm_pair.h hm_bucket.h hm.h
+test_hm.o: test_hm.c hm_pair.h hm_bucket.h hm.h malloc_info.h
 	$(CC) test_hm.c
 
 

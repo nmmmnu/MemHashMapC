@@ -5,25 +5,19 @@
 
 #include <stdint.h>
 
+inline int hm_list_exists(HMPair **bucket, const char *key);
 
-typedef struct HMBucket{
-	uint64_t	count;	// 8
-	HMPair **	pairs;	// pointer to array of pointers
-} HMBucket;
+const HMPair *hm_list_get(HMPair **bucket, const char *key);
 
-int hm_bucket_freepairs(HMBucket *bucket);
+uint64_t hm_list_count(HMPair **bucket);
 
-inline int hm_bucket_exists(const HMBucket *bucket, const char *key);
+int hm_list_put(HMPair **bucket, HMPair *newpair);
 
-HMPair *hm_bucket_get(HMBucket *bucket, const char *key);
+int hm_list_remove(HMPair **bucket, const char *key);
 
-int hm_bucket_put(HMBucket *bucket, HMPair *newpair);
+void hm_list_print(HMPair **bucket);
 
-int hm_bucket_remove(HMBucket *bucket, const char *key);
-
-uint64_t hm_bucket_count(const HMBucket *bucket);
-
-void hm_bucket_print(const HMBucket *bucket);
+int hm_list_free(HMPair **bucket);
 
 #endif
 

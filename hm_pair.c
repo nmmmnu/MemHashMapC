@@ -8,26 +8,12 @@
 
 #define MICRO_TIME_MULTIPLE 1000 * 1000
 
-unsigned long int _hm_pair_now(){
+inline unsigned long int _hm_pair_now(){
 	struct timeval tv;
 
 	gettimeofday(&tv,NULL);
 
 	return tv.tv_sec * MICRO_TIME_MULTIPLE + tv.tv_usec;
-}
-
-int hm_pair_valid(const HMPair *pair){
-//	if (pair->key == NULL || pair->val == NULL || pair->created == 0 || ( ! hm_pair_expired(pair)) )
-//		return 0;
-
-	return 1;
-}
-
-int hm_pair_expired(const HMPair *pair){
-	if (pair->expires)
-		return pair->created + pair->expires * MICRO_TIME_MULTIPLE < _hm_pair_now();
-
-	return 0;
 }
 
 HMPair *hm_pair_create(const char*key, const char*val, unsigned long int expires){
@@ -39,6 +25,7 @@ HMPair *hm_pair_create(const char*key, const char*val, unsigned long int expires
 	if (pair == NULL)
 		return NULL;
 
+	pair->next	= NULL;
 	pair->created	= _hm_pair_now();
 	pair->expires	= expires;
 	pair->keylen	= keylen;
@@ -59,7 +46,7 @@ inline int hm_pair_free(HMPair *pair){
 	return 1;
 }
 
-static const char *_hm_pair_sub(const HMPair *pair, char *buffer, size_t len, size_t data_start, size_t data_len){
+static const char *_hm_pair_sub(const HMPair *pair, char *buffer, size_t len, size_t data_start, uint32_t data_len){
 	data_len = MIN(data_len, len - 1);
 
 	memcpy(buffer, & pair->buffer[ data_start ], data_len);
@@ -69,14 +56,14 @@ static const char *_hm_pair_sub(const HMPair *pair, char *buffer, size_t len, si
 }
 
 
-inline const char *hm_pair_getkey(const HMPair *pair, char *buffer, size_t len){
+inline const char *hm_pair_getkey(const HMPair *pair, char *buffer, uint32_t len){
 	if (pair == NULL)
 		return NULL;
 
 	return _hm_pair_sub(pair, buffer, len, 0, pair->keylen);
 }
 
-inline const char *hm_pair_getval(const HMPair *pair, char *buffer, size_t len){
+inline const char *hm_pair_getval(const HMPair *pair, char *buffer, uint32_t len){
 	if (pair == NULL)
 		return NULL;
 
@@ -103,3 +90,16 @@ inline int hm_pair_equalp(const HMPair *pair1, const HMPair *pair2){
 	return ! memcmp(& pair1->buffer[0], & pair2->buffer[0], pair1->keylen);
 }
 
+inline int hm_pair_valid(const HMPair *pair){
+//	if (pair->key == NULL || pair->val == NULL || pair->created == 0 || ( ! hm_pair_expired(pair)) )
+//		return 0;
+
+	return 1;
+}
+
+inline int hm_pair_expired(const HMPair *pair){
+	if (pair->expires)
+		return pair->created + pair->expires * MICRO_TIME_MULTIPLE < _hm_pair_now();
+
+	return 0;
+}
