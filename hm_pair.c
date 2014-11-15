@@ -17,8 +17,23 @@ inline unsigned long int _hm_pair_now(){
 }
 
 HMPair *hm_pair_create(const char*key, const char*val, unsigned long int expires){
-	size_t keylen = strlen(key);
-	size_t vallen = strlen(val);
+	/*
+	In first version, we kept the character data inside the buffer,
+	and skipped the last \0 terminating character.
+
+	By this way we "save" 2 bytes.
+
+	However examinig memory allocation shows, that memory used is
+	much more than memory allocated, no matter what allocator is used.
+
+	Tests were made using standard malloc(), jemalloc and tcmalloc.
+
+	By this reason we will put the terminating character,
+	so we can pass key and value back to the client using refference
+	to stored value. Comparrisson will work easyer and better too.
+	*/
+	size_t keylen = strlen(key) + 1;
+	size_t vallen = strlen(val) + 1;
 
 	HMPair *pair = malloc( sizeof(HMPair) + keylen + vallen); // + 1
 
@@ -46,35 +61,25 @@ inline int hm_pair_free(HMPair *pair){
 	return 1;
 }
 
-static const char *_hm_pair_sub(const HMPair *pair, char *buffer, size_t len, size_t data_start, uint32_t data_len){
-	data_len = MIN(data_len, len - 1);
-
-	memcpy(buffer, & pair->buffer[ data_start ], data_len);
-	buffer[data_len] = '\0';
-
-	return buffer;
-}
-
-
-inline const char *hm_pair_getkey(const HMPair *pair, char *buffer, uint32_t len){
+inline const char *hm_pair_getkey(const HMPair *pair){
 	if (pair == NULL)
 		return NULL;
 
-	return _hm_pair_sub(pair, buffer, len, 0, pair->keylen);
+	return & pair->buffer[0];
 }
 
-inline const char *hm_pair_getval(const HMPair *pair, char *buffer, uint32_t len){
+inline const char *hm_pair_getval(const HMPair *pair){
 	if (pair == NULL)
 		return NULL;
 
-	return _hm_pair_sub(pair, buffer, len, pair->keylen, pair->vallen);
+	return & pair->buffer[ pair->keylen ];
 }
 
 inline int hm_pair_equals(const HMPair *pair, const char *key){
 	if (pair == NULL || key == NULL)
 		return 0;
 
-	if (pair->keylen != strlen(key))
+	if (pair->keylen != strlen(key) + 1)
 		return 0;
 
 	return ! memcmp(& pair->buffer[0], key, pair->keylen);

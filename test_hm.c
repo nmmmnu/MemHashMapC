@@ -27,24 +27,20 @@ void hm_pair_test(const int delay){
 		return;
 	}
 
-	const unsigned short int max = 1024;
+	PRINTF_TEST("HMPair", "equals",		hm_pair_equals(p1, "1234567890abc")		);
+	PRINTF_TEST("HMPair", "equals",		! hm_pair_equals(p1, "1234567890abc123") 	);
+	PRINTF_TEST("HMPair", "! equals",	! hm_pair_equals(p1, "xxxxxx")			);
+	PRINTF_TEST("HMPair", "key",		strcmp(hm_pair_getkey(p1), key) == 0		);
+	PRINTF_TEST("HMPair", "val",		strcmp(hm_pair_getval(p1), val) == 0		);
+	PRINTF_TEST("HMPair", "valid",		hm_pair_valid(p1)				);
+	PRINTF_TEST("HMPair", "expired",	hm_pair_expired(p1) == 0			);
 
-	char buffer[max];
-
-	PRINTF_TEST("HMPair", "equals",		hm_pair_equals(p1, "1234567890abc")			);
-	PRINTF_TEST("HMPair", "equals",		! hm_pair_equals(p1, "1234567890abc123") 		);
-	PRINTF_TEST("HMPair", "! equals",	! hm_pair_equals(p1, "xxxxxx")				);
-	PRINTF_TEST("HMPair", "key",		strcmp(hm_pair_getkey(p1, buffer, max), key) == 0	);
-	PRINTF_TEST("HMPair", "val",		strcmp(hm_pair_getval(p1, buffer, max), val) == 0	);
-	PRINTF_TEST("HMPair", "valid",		hm_pair_valid(p1)					);
-	PRINTF_TEST("HMPair", "expired",	hm_pair_expired(p1) == 0				);
-
-	PRINTF_TEST("HMPair", "expired",	hm_pair_expired(p2) == 0				);
+	PRINTF_TEST("HMPair", "expired",	hm_pair_expired(p2) == 0			);
 	if (delay){
 	printf("sleep for 1 sec...\n");
 	sleep(1);
-	PRINTF_TEST("HMPair", "expired",	hm_pair_expired(p2)					);
-	PRINTF_TEST("HMPair", "! valid",	hm_pair_valid(p2)					);
+	PRINTF_TEST("HMPair", "expired",	hm_pair_expired(p2)				);
+	PRINTF_TEST("HMPair", "! valid",	hm_pair_valid(p2)				);
 	}
 
 	free(p1);

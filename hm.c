@@ -7,9 +7,6 @@
 
 #define hash(a) hm_hash(a)
 
-#define BUFFER_SIZE 1024
-
-
 // DJB Hash function from CDB
 unsigned long int hm_hash(const char *str){
 	unsigned long hash = 5381;
@@ -104,9 +101,7 @@ int hm_put(HM *table, HMPair *pair){
 		return 0;
 	}
 
-	char buffer[BUFFER_SIZE];
-
-	uint64_t index = _hm_getbucketforkey(table, hm_pair_getkey(pair, buffer, BUFFER_SIZE) );
+	uint64_t index = _hm_getbucketforkey(table, hm_pair_getkey(pair) );
 
 	if (index == 0)
 		return 0;

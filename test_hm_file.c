@@ -8,13 +8,12 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX 1024
-
 #define BUCKETS 1 * 1000 * 1000
 
 void processfile(HM *table, const char *filename, int op);
 char *trim(char *s);
 
+#define MAX 1024
 
 //#define getchar()
 
@@ -26,8 +25,6 @@ int main(int argc, char **argv){
 
 	HM *table = hm_create(BUCKETS);
 
-	char buffer[MAX];
-
 	printf("Load file\n");
 	processfile(table, filename, 0);
 
@@ -36,7 +33,7 @@ int main(int argc, char **argv){
 	if (pair == NULL)
 		printf("Key %s not found\n", findkey);
 	else
-		printf("Key %s found - %s\n", findkey, hm_pair_getval(pair, buffer, MAX));
+		printf("Key %s found - %s\n", findkey, hm_pair_getval(pair));
 
 	display_mallinfo();
 

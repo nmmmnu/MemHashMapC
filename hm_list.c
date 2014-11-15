@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <inttypes.h>
 
-#define PRINT_BUFFER_SIZE 20
 #define PRINT_FORMAT "| %10" PRIu64 " | %-20s | %-20s | %20p | %20p |\n"
 
 
@@ -84,9 +83,6 @@ int hm_list_remove(HMPair **bucket, const char *key){
 
 
 void hm_list_print(HMPair **bucket){
-	char buffer1[PRINT_BUFFER_SIZE];
-	char buffer2[PRINT_BUFFER_SIZE];
-
 	printf("\n");
 	printf("Print bucket %p\n", bucket);
 	printf("\n");
@@ -99,8 +95,8 @@ void hm_list_print(HMPair **bucket){
 	for(pair = *bucket; pair; pair = pair->next){
 		printf(PRINT_FORMAT,
 			i,
-			hm_pair_getkey(pair, buffer1, PRINT_BUFFER_SIZE),
-			hm_pair_getval(pair, buffer2, PRINT_BUFFER_SIZE),
+			hm_pair_getkey(pair),
+			hm_pair_getval(pair),
 			pair,
 			pair->next
 		);
