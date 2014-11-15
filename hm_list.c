@@ -7,7 +7,7 @@
 #define PRINT_FORMAT "| %10" PRIu64 " | %-20s | %-20s | %20p | %20p |\n"
 
 
-const HMPair *hm_list_get(HMPair **bucket, const char *key){
+const HMPair *hm_list_get(HMPair * const *bucket, const char *key){
 	if (key == NULL)
 		return 0;
 
@@ -22,12 +22,12 @@ const HMPair *hm_list_get(HMPair **bucket, const char *key){
 }
 
 
-inline int hm_list_exists(HMPair **bucket, const char *key){
+inline int hm_list_exists(HMPair * const *bucket, const char *key){
 	return hm_list_get(bucket, key) ? 1 : 0;
 }
 
 
-uint64_t hm_list_count(HMPair **bucket){
+uint64_t hm_list_count(HMPair * const *bucket){
 	uint64_t count = 0;
 
 	const HMPair *pair;
@@ -42,7 +42,8 @@ int hm_list_put(HMPair **bucket, HMPair *newpair){
 	if (newpair == NULL)
 		return 0;
 
-	// no delete yet
+	const char *key = hm_pair_getkey(newpair);
+	hm_list_remove(bucket, key);
 
 	// add at the beginning...
 	newpair->next = *bucket;
@@ -56,7 +57,6 @@ int hm_list_put(HMPair **bucket, HMPair *newpair){
 int hm_list_remove(HMPair **bucket, const char *key){
 	if (key == NULL)
 		return 0;
-
 
 	HMPair *prev = NULL;
 	HMPair *pair;
@@ -82,7 +82,7 @@ int hm_list_remove(HMPair **bucket, const char *key){
 }
 
 
-void hm_list_print(HMPair **bucket){
+void hm_list_print(HMPair * const *bucket){
 	printf("\n");
 	printf("Print bucket %p\n", bucket);
 	printf("\n");
