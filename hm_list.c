@@ -9,12 +9,12 @@
 
 const HMPair *hm_list_get(HMPair * const *bucket, const char *key){
 	if (key == NULL)
-		return 0;
+		return NULL;
 
 	const HMPair *pair;
 	for(pair = *bucket; pair; pair = pair->next){
 		// Check if this is what we are looking for
-		if (hm_pair_equals(pair, key))
+		if (hm_pair_equalkey(pair, key))
 			return pair;
 	}
 
@@ -37,6 +37,7 @@ uint64_t hm_list_count(HMPair * const *bucket){
 
 	return count;
 }
+
 
 int hm_list_put(HMPair **bucket, HMPair *newpair){
 	if (newpair == NULL)
@@ -64,7 +65,7 @@ int hm_list_remove(HMPair **bucket, const char *key){
 	HMPair *pair;
 	for(pair = *bucket; pair; pair = pair->next){
 		// Check if this is what we are looking for
-		if (hm_pair_equals(pair, key)){
+		if (hm_pair_equalkey(pair, key)){
 			if (prev){
 				prev->next = pair->next;
 			}else{
@@ -112,7 +113,6 @@ void hm_list_print(HMPair * const *bucket){
 
 	printf("\n");
 }
-
 
 
 int hm_list_free(HMPair **bucket){

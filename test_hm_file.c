@@ -8,7 +8,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define BUCKETS 1 * 1000 * 1000
+#define BUCKETS 10 * 1000 * 1000
 
 void processfile(HM *table, const char *filename, int op);
 char *trim(char *s);
@@ -68,7 +68,7 @@ void processfile(HM *table, const char *filename, int op){
 
 		switch(op){
 		case 0:
-			hm_put(table, hm_pair_create(key, key, 0));
+			hm_put(table, hm_pair_create(key, key));
 			break;
 		case 1:
 			hm_remove(table, key);
@@ -77,8 +77,10 @@ void processfile(HM *table, const char *filename, int op){
 		}
 
 		i++;
-		if (i % ( 10 * 1000 * 1000 ) == 0)
+		if (i % ( 1 * 1000 * 1000 ) == 0){
 			printf("Processed %10u...\n", i);
+			//display_mallinfo();
+		}
 	}
 
 	fclose(f);

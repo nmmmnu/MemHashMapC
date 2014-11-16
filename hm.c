@@ -96,11 +96,6 @@ int hm_put(HM *table, HMPair *pair){
 	if (pair == NULL)
 		return 0;
 
-	if (! hm_pair_valid(pair)){
-		free(pair);
-		return 0;
-	}
-
 	uint64_t index = _hm_getbucketforkey(table, hm_pair_getkey(pair) );
 
 	if (index == 0)
