@@ -42,6 +42,8 @@ int hm_list_put(HMPair **bucket, HMPair *newpair){
 	if (newpair == NULL)
 		return 0;
 
+	// delete first
+	// tests shows this is not expencive operation.
 	const char *key = hm_pair_getkey(newpair);
 	hm_list_remove(bucket, key);
 
