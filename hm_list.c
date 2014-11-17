@@ -221,8 +221,11 @@ static inline int _hm_list_put_eventual(HMPair **bucket, HMPair *newpair){
 
 	if (pair != NULL){
 		// check if the data in database is newer than "newpair"
-		if (pair->created > newpair->created)
+		if (pair->created > newpair->created){
+			// prevent memory leak
+			free(newpair);
 			return 0;
+		}
 	}
 
 	// go ahead with dumb solution

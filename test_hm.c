@@ -105,6 +105,7 @@ void hm_list_test(){
 	hm_list_put(bucket, hm_pair_create("age",	"5"	));
 	hm_list_put(bucket, hm_pair_create("lang",	"C/C++"	));
 
+
 	PRINTF_TEST("HM List", "free",		hm_list_free(bucket)				);
 	PRINTF_TEST("HM List", "count",		hm_list_count(bucket) == 0			);
 }
