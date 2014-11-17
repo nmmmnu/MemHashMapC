@@ -8,7 +8,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define BUCKETS 10 * 1000 * 1000
+#define BUCKETS 100 * 1000 * 1000
 
 void processfile(HM *table, const char *filename, int op);
 char *trim(char *s);

@@ -20,7 +20,8 @@ typedef struct HMPair{
 
 HMPair *hm_pair_create(const char*key, const char*val);
 inline HMPair *hm_pair_createx(const char*key, const char*val, uint32_t expires);
-inline int hm_pair_free(HMPair *pair);
+
+/* inline int hm_pair_free(HMPair *pair); */
 
 inline const char *hm_pair_getkey(const HMPair *pair);
 inline const char *hm_pair_getval(const HMPair *pair);

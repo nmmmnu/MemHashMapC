@@ -14,6 +14,7 @@
 #define PRINTF_TEST(module, test, func) \
 	printf( "%-10s Testing %-20s %s\n", module, test, func ? "OK" : "Fail")
 
+
 void hm_pair_test(const int delay){
 
 	const char *key = "1234567890abc";
@@ -85,7 +86,19 @@ void hm_list_test(){
 
 	PRINTF_TEST("HM List", "count",		hm_list_count(bucket) == 0			);
 
+	// ==================================
+
+	HMPair *eventual_pair =  hm_pair_create("ev_pair", "one");
+	hm_list_put(bucket, eventual_pair);
+	eventual_pair->created += 3600 * 1000; // set time in the future
+	hm_list_put(bucket, hm_pair_create("ev_pair",	"two"	));
+	const HMPair *eventual_pair2 = hm_list_get(bucket, "ev_pair");
+	PRINTF_TEST("HM List", "eventual get",	strcmp(hm_pair_getval(eventual_pair2), "one") == 0	);
+
+	// ==================================
+
 	PRINTF_TEST("HM List", "free",		hm_list_free(bucket) 				);
+	PRINTF_TEST("HM List", "count",		hm_list_count(bucket) == 0			);
 
 	// add some more pairs to test hm_list_free() with data
 	hm_list_put(bucket, hm_pair_create("name",	"niki"	));
@@ -93,12 +106,13 @@ void hm_list_test(){
 	hm_list_put(bucket, hm_pair_create("lang",	"C/C++"	));
 
 	PRINTF_TEST("HM List", "free",		hm_list_free(bucket)				);
+	PRINTF_TEST("HM List", "count",		hm_list_count(bucket) == 0			);
 }
 
 
 void hm_table_test(){
 	const uint64_t capacity = 3;
-	HM *table = hm_create(capacity);
+ 	HM *table = hm_create(capacity);
 
 	hm_put(table, hm_pair_create("name",	"niki"		));
 	hm_put(table, hm_pair_create("age",	"5"		));
@@ -145,7 +159,7 @@ void hm_print_sizes(){
 
 
 int main(int argc, char **argv){
-	hm_pair_test(1);
+	hm_pair_test(0);
 
 	hm_list_test();
 
@@ -157,3 +171,4 @@ int main(int argc, char **argv){
 
 	return 0;
 }
+

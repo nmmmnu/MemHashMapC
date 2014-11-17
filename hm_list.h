@@ -5,7 +5,7 @@
 
 #include <stdint.h>
 
-inline int hm_list_exists(HMPair * const *bucket, const char *key);
+int hm_list_exists(HMPair * const *bucket, const char *key);
 
 const HMPair *hm_list_get(HMPair * const *bucket, const char *key);
 

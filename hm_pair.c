@@ -63,12 +63,14 @@ inline HMPair *hm_pair_createx(const char*key, const char*val, uint32_t expires)
 	return pair;
 }
 
+/*
 inline int hm_pair_free(HMPair *pair){
 	// free() works on NULL
 	free(pair);
 
 	return 1;
 }
+*/
 
 inline const char *hm_pair_getkey(const HMPair *pair){
 	return & pair->buffer[0];
