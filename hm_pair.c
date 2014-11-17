@@ -8,6 +8,8 @@
 
 #define MICRO_TIME_MULTIPLE 1 * 1000 * 1000
 
+inline static unsigned long int _hm_pair_now();
+
 HMPair *hm_pair_create(const char*key, const char*val){
 	/*
 	In first version, we kept the character data inside the buffer,
@@ -37,6 +39,7 @@ HMPair *hm_pair_create(const char*key, const char*val){
 		return NULL;
 
 	pair->next	= NULL;
+	pair->created	=  _hm_pair_now();
 	pair->keylen	= keylen;
 	pair->vallen	= vallen;
 
@@ -48,6 +51,17 @@ HMPair *hm_pair_create(const char*key, const char*val){
 
 	return pair;
 };
+
+inline HMPair *hm_pair_createx(const char*key, const char*val, uint32_t expires){
+	HMPair *pair = hm_pair_create(key, val);
+
+	if (pair == NULL)
+		return NULL;
+
+	pair->expires = expires;
+
+	return pair;
+}
 
 inline int hm_pair_free(HMPair *pair){
 	// free() works on NULL
@@ -84,16 +98,6 @@ inline int hm_pair_equalpair(const HMPair *pair1, const HMPair *pair2){
 	return ! memcmp(& pair1->buffer[0], & pair2->buffer[0], pair1->keylen);
 }
 
-
-
-
-
-
-
-
-
-
-/*
 inline static unsigned long int _hm_pair_now(){
 	struct timeval tv;
 
@@ -103,15 +107,11 @@ inline static unsigned long int _hm_pair_now(){
 }
 
 inline int hm_pair_valid(const HMPair *pair){
-	return ! hm_pair_expired(pair);
-}
-
-inline int hm_pair_expired(const HMPair *pair){
 	if (pair->expires)
-		return pair->created + pair->expires * MICRO_TIME_MULTIPLE < _hm_pair_now();
+		return pair->created + pair->expires * MICRO_TIME_MULTIPLE > _hm_pair_now();
 
-	return 0;
+	return 1;
 }
-*/
+
 
 

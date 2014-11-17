@@ -20,6 +20,7 @@ void hm_pair_test(const int delay){
 	const char *val = "1234567890xyz";
 
 	HMPair *p1 = hm_pair_create(key, val);
+	HMPair *p2 = hm_pair_createx(key, val, 1);
 
 	if (p1 == NULL){
 		printf("Not enought memory!\n");
@@ -31,20 +32,20 @@ void hm_pair_test(const int delay){
 	PRINTF_TEST("HMPair", "! equals",	! hm_pair_equalkey(p1, "xxxxxx")		);
 	PRINTF_TEST("HMPair", "key",		strcmp(hm_pair_getkey(p1), key) == 0		);
 	PRINTF_TEST("HMPair", "val",		strcmp(hm_pair_getval(p1), val) == 0		);
-/*
-	PRINTF_TEST("HMPair", "valid",		hm_pair_valid(p1)				);
-	PRINTF_TEST("HMPair", "expired",	hm_pair_expired(p1) == 0			);
 
-	PRINTF_TEST("HMPair", "expired",	hm_pair_expired(p2) == 0			);
+
+	PRINTF_TEST("HMPair", "valid",		hm_pair_valid(p1)				);
+	PRINTF_TEST("HMPair", "valid",		hm_pair_valid(p2)				);
 
 	if (delay){
 	printf("sleep for 1 sec...\n");
 	sleep(1);
-	PRINTF_TEST("HMPair", "expired",	hm_pair_expired(p2)				);
-	PRINTF_TEST("HMPair", "! valid",	hm_pair_valid(p2)				);
+	PRINTF_TEST("HMPair", "valid",		hm_pair_valid(p1)				);
+	PRINTF_TEST("HMPair", "valid",		hm_pair_valid(p2) == 0				);
 	}
-*/
+
 	free(p1);
+	free(p2);
 }
 
 
@@ -144,7 +145,7 @@ void hm_print_sizes(){
 
 
 int main(int argc, char **argv){
-	hm_pair_test(0);
+	hm_pair_test(1);
 
 	hm_list_test();
 
