@@ -5,6 +5,10 @@ _ot/
 test_hm
 test_hm_file
 
+test_hm.exe
+test_hm_file.exe
+
+
 data/
 
 a.out
