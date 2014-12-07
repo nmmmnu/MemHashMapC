@@ -160,7 +160,7 @@ void hm_print_sizes(){
 
 
 int main(int argc, char **argv){
-	hm_pair_test(0);
+	hm_pair_test(argc > 1);
 
 	hm_list_test();
 

@@ -6,9 +6,11 @@
 
 #define MIN(a, b) (a) < (b) ? (a) : (b)
 
-#define MICRO_TIME_MULTIPLE 1 * 1000 * 1000
 
-inline static unsigned long int _hm_pair_now();
+#define TIMESTAMP_MICROTIME_MULTIPLE 1 * 1000 * 1000
+
+
+inline static timestamp_t _hm_pair_now();
 
 HMPair *hm_pair_create(const char*key, const char*val){
 	/*
@@ -100,17 +102,17 @@ inline int hm_pair_equalpair(const HMPair *pair1, const HMPair *pair2){
 	return ! memcmp(& pair1->buffer[0], & pair2->buffer[0], pair1->keylen);
 }
 
-inline static unsigned long int _hm_pair_now(){
+inline static timestamp_t _hm_pair_now(){
 	struct timeval tv;
 
 	gettimeofday(&tv, NULL);
 
-	return tv.tv_sec * MICRO_TIME_MULTIPLE + tv.tv_usec;
+	return tv.tv_sec * TIMESTAMP_MICROTIME_MULTIPLE + tv.tv_usec;
 }
 
 inline int hm_pair_valid(const HMPair *pair){
 	if (pair->expires)
-		return pair->created + pair->expires * MICRO_TIME_MULTIPLE > _hm_pair_now();
+		return pair->created + pair->expires * TIMESTAMP_MICROTIME_MULTIPLE > _hm_pair_now();
 
 	return 1;
 }

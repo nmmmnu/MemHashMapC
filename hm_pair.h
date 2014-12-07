@@ -9,7 +9,7 @@ typedef uint64_t timestamp_t;
 typedef struct HMPair{
 	void *		next;		// system dependent
 
-	uint64_t	created;	// 8
+	timestamp_t	created;	// 8
 	uint32_t	expires;	// 4, 136 years, not that bad.
 
 	uint32_t	keylen;		// 4
@@ -25,6 +25,7 @@ inline HMPair *hm_pair_createx(const char*key, const char*val, uint32_t expires)
 
 inline const char *hm_pair_getkey(const HMPair *pair);
 inline const char *hm_pair_getval(const HMPair *pair);
+
 inline int hm_pair_equalkey(const HMPair *pair, const char *key);
 inline int hm_pair_equalpair(const HMPair *pair1, const HMPair *pair2);
 
