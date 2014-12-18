@@ -22,7 +22,7 @@ unsigned long int hm_hash(const char *str){
 
 
 HM *hm_create(uint64_t capacity){
-	HM *table = malloc(sizeof(HM) + sizeof(HMPair *) * capacity);
+	HM *table = malloc(sizeof(HM) + sizeof(hm_pair_t *) * capacity);
 
 	if (table == NULL)
 		return NULL;
@@ -36,7 +36,7 @@ HM *hm_create(uint64_t capacity){
 	}
 	*/
 
-	memset(table->buckets, 0, sizeof(HMPair *) * capacity);
+	memset(table->buckets, 0, sizeof(hm_pair_t *) * capacity);
 
 	return table;
 };
@@ -71,13 +71,13 @@ int hm_exists(HM *table, const char *key){
 	if (index == 0)
 		return 0;
 
-	HMPair **bucket = & table->buckets[index - 1];
+	hm_pair_t **bucket = & table->buckets[index - 1];
 
 	return hm_list_exists(bucket, key);
 }
 
 
-const HMPair *hm_get(HM *table, const char *key){
+const hm_pair_t *hm_get(HM *table, const char *key){
 	if (key == 0)
 		return NULL;
 
@@ -86,13 +86,13 @@ const HMPair *hm_get(HM *table, const char *key){
 	if (index == 0)
 		return NULL;
 
-	HMPair **bucket = & table->buckets[index - 1];
+	hm_pair_t **bucket = & table->buckets[index - 1];
 
 	return hm_list_get(bucket , key);
 }
 
 
-int hm_put(HM *table, HMPair *pair){
+int hm_put(HM *table, hm_pair_t *pair){
 	if (pair == NULL)
 		return 0;
 
@@ -101,7 +101,7 @@ int hm_put(HM *table, HMPair *pair){
 	if (index == 0)
 		return 0;
 
-	HMPair **bucket = & table->buckets[index - 1];
+	hm_pair_t **bucket = & table->buckets[index - 1];
 
 	if (hm_list_put(bucket, pair))
 		return 1;
@@ -120,7 +120,7 @@ int hm_remove(HM *table, const char *key){
 	if (index == 0)
 		return 0;
 
-	HMPair **bucket = & table->buckets[index - 1];
+	hm_pair_t **bucket = & table->buckets[index - 1];
 
 	return hm_list_remove(bucket, key);
 }

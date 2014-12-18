@@ -8,37 +8,37 @@
 
 
 
-static inline int _hm_list_put(HMPair **bucket, HMPair *newpair);
+static inline int _hm_list_put(hm_pair_t **bucket, hm_pair_t *newpair);
 
-static inline int _hm_list_put_dumb(HMPair **bucket, HMPair *newpair);
-static inline int _hm_list_put_eventual(HMPair **bucket, HMPair *newpair);
+static inline int _hm_list_put_dumb(hm_pair_t **bucket, hm_pair_t *newpair);
+static inline int _hm_list_put_eventual(hm_pair_t **bucket, hm_pair_t *newpair);
 
-static inline const HMPair *_hm_list_get_dumb(HMPair * const *bucket, const char *key);
-static inline const HMPair *_hm_list_get_eventual(HMPair * const *bucket, const char *key);
+static inline const hm_pair_t *_hm_list_get_dumb(hm_pair_t * const *bucket, const char *key);
+static inline const hm_pair_t *_hm_list_get_eventual(hm_pair_t * const *bucket, const char *key);
 
-static inline uint64_t _hm_list_count_dumb(HMPair * const *bucket);
-static inline uint64_t _hm_list_count_eventual(HMPair * const *bucket);
+static inline uint64_t _hm_list_count_dumb(hm_pair_t * const *bucket);
+static inline uint64_t _hm_list_count_eventual(hm_pair_t * const *bucket);
 
-static inline int _hm_list_remove_dumb(HMPair **bucket, const char *key);
-static inline int _hm_list_remove_eventual(HMPair **bucket, const char *key);
-
-
+static inline int _hm_list_remove_dumb(hm_pair_t **bucket, const char *key);
+static inline int _hm_list_remove_eventual(hm_pair_t **bucket, const char *key);
 
 
 
-const HMPair *hm_list_get(HMPair * const *bucket, const char *key){
+
+
+const hm_pair_t *hm_list_get(hm_pair_t * const *bucket, const char *key){
 	return _hm_list_get_eventual(bucket, key);
 }
 
-int hm_list_put(HMPair **bucket, HMPair *newpair){
+int hm_list_put(hm_pair_t **bucket, hm_pair_t *newpair){
 	return _hm_list_put_eventual(bucket, newpair);
 }
 
-uint64_t hm_list_count(HMPair * const *bucket){
+uint64_t hm_list_count(hm_pair_t * const *bucket){
 	return _hm_list_count_eventual(bucket);
 }
 
-int hm_list_remove(HMPair **bucket, const char *key){
+int hm_list_remove(hm_pair_t **bucket, const char *key){
 	return _hm_list_remove_eventual(bucket, key);
 }
 
@@ -46,11 +46,11 @@ int hm_list_remove(HMPair **bucket, const char *key){
 
 
 
-int hm_list_exists(HMPair * const *bucket, const char *key){
+int hm_list_exists(hm_pair_t * const *bucket, const char *key){
 	return hm_list_get(bucket, key) ? 1 : 0;
 }
 
-void hm_list_print(HMPair * const *bucket){
+void hm_list_print(hm_pair_t * const *bucket){
 	printf("\n");
 	printf("Print bucket %p\n", bucket);
 	printf("\n");
@@ -59,7 +59,7 @@ void hm_list_print(HMPair * const *bucket){
 //	printf("\n");
 
 	uint64_t i = 0;
-	const HMPair *pair;
+	const hm_pair_t *pair;
 	for(pair = *bucket; pair; pair = pair->next){
 		printf(PRINT_FORMAT,
 			i,
@@ -80,9 +80,9 @@ void hm_list_print(HMPair * const *bucket){
 }
 
 
-int hm_list_free(HMPair **bucket){
-	HMPair *copy;
-	HMPair *pair;
+int hm_list_free(hm_pair_t **bucket){
+	hm_pair_t *copy;
+	hm_pair_t *pair;
 	for(pair = *bucket; pair; ){
 		copy = pair;
 
@@ -100,7 +100,7 @@ int hm_list_free(HMPair **bucket){
 
 
 
-static inline int _hm_list_put(HMPair **bucket, HMPair *newpair){
+static inline int _hm_list_put(hm_pair_t **bucket, hm_pair_t *newpair){
 	if (newpair == NULL)
 		return 0;
 
@@ -123,7 +123,7 @@ static inline int _hm_list_put(HMPair **bucket, HMPair *newpair){
  *
  */
 
-static inline int _hm_list_put_dumb(HMPair **bucket, HMPair *newpair){
+static inline int _hm_list_put_dumb(hm_pair_t **bucket, hm_pair_t *newpair){
 	// delete first
 	// tests shows this is not expencive operation.
 	const char *key = hm_pair_getkey(newpair);
@@ -135,11 +135,11 @@ static inline int _hm_list_put_dumb(HMPair **bucket, HMPair *newpair){
 	return 1;
 }
 
-static inline const HMPair *_hm_list_get_dumb(HMPair * const *bucket, const char *key){
+static inline const hm_pair_t *_hm_list_get_dumb(hm_pair_t * const *bucket, const char *key){
 	if (key == NULL)
 		return NULL;
 
-	const HMPair *pair;
+	const hm_pair_t *pair;
 	for(pair = *bucket; pair; pair = pair->next){
 		// Check if this is what we are looking for
 		if (hm_pair_equalkey(pair, key))
@@ -149,10 +149,10 @@ static inline const HMPair *_hm_list_get_dumb(HMPair * const *bucket, const char
 	return NULL;
 }
 
-static inline uint64_t _hm_list_count_dumb(HMPair * const *bucket){
+static inline uint64_t _hm_list_count_dumb(hm_pair_t * const *bucket){
 	uint64_t count = 0;
 
-	const HMPair *pair;
+	const hm_pair_t *pair;
 	for(pair = *bucket; pair; pair = pair->next){
 		count++;
 	}
@@ -160,12 +160,12 @@ static inline uint64_t _hm_list_count_dumb(HMPair * const *bucket){
 	return count;
 }
 
-static inline int _hm_list_remove_dumb(HMPair **bucket, const char *key){
+static inline int _hm_list_remove_dumb(hm_pair_t **bucket, const char *key){
 	if (key == NULL)
 		return 0;
 
-	HMPair *prev = NULL;
-	HMPair *pair;
+	hm_pair_t *prev = NULL;
+	hm_pair_t *pair;
 	for(pair = *bucket; pair; pair = pair->next){
 		// Check if this is what we are looking for
 		if (hm_pair_equalkey(pair, key)){
@@ -197,8 +197,8 @@ static inline int _hm_list_remove_dumb(HMPair **bucket, const char *key){
  *
  */
 
-static inline const HMPair *_hm_list_get_eventual(HMPair * const *bucket, const char *key){
-	const HMPair *pair = _hm_list_get_dumb(bucket, key);
+static inline const hm_pair_t *_hm_list_get_eventual(hm_pair_t * const *bucket, const char *key){
+	const hm_pair_t *pair = _hm_list_get_dumb(bucket, key);
 
 	if (pair == NULL)
 		return NULL;
@@ -209,7 +209,7 @@ static inline const HMPair *_hm_list_get_eventual(HMPair * const *bucket, const 
 	return NULL;
 }
 
-static inline int _hm_list_put_eventual(HMPair **bucket, HMPair *newpair){
+static inline int _hm_list_put_eventual(hm_pair_t **bucket, hm_pair_t *newpair){
 	// this needs to be completly rewritten for speed.
 	// however then code became very complicated.
 
@@ -217,7 +217,7 @@ static inline int _hm_list_put_eventual(HMPair **bucket, HMPair *newpair){
 		return 0;
 
 	const char *key = hm_pair_getkey(newpair);
-	const HMPair *pair = _hm_list_get_eventual(bucket, key);
+	const hm_pair_t *pair = _hm_list_get_eventual(bucket, key);
 
 	if (pair != NULL){
 		// check if the data in database is newer than "newpair"
@@ -232,10 +232,10 @@ static inline int _hm_list_put_eventual(HMPair **bucket, HMPair *newpair){
 	return _hm_list_put_dumb(bucket, newpair);
 }
 
-static inline uint64_t _hm_list_count_eventual(HMPair * const *bucket){
+static inline uint64_t _hm_list_count_eventual(hm_pair_t * const *bucket){
 	uint64_t count = 0;
 
-	const HMPair *pair;
+	const hm_pair_t *pair;
 	for(pair = *bucket; pair; pair = pair->next){
 		if (hm_pair_valid(pair))
 			count++;
@@ -244,7 +244,7 @@ static inline uint64_t _hm_list_count_eventual(HMPair * const *bucket){
 	return count;
 }
 
-static inline int _hm_list_remove_eventual(HMPair **bucket, const char *key){
+static inline int _hm_list_remove_eventual(hm_pair_t **bucket, const char *key){
 	return _hm_list_remove_dumb(bucket, key);
 }
 

@@ -9,7 +9,7 @@
 
 typedef struct{
 	uint64_t	capacity;	// 8
-	HMPair	 	*buckets[];	// dynamic array of pointers to link lists
+	hm_pair_t	*buckets[];	// dynamic array of pointers to link lists
 } HM;
 
 
@@ -18,8 +18,8 @@ int hm_free(HM *table);
 
 int hm_exists(HM *table, const char *key);
 
-const HMPair *hm_get(HM *table, const char *key);
-int hm_put(HM *table, HMPair *pair);
+const hm_pair_t *hm_get(HM *table, const char *key);
+int hm_put(HM *table, hm_pair_t *pair);
 int hm_remove(HM *table, const char *key);
 
 void hm_print(HM *table, int all);
@@ -27,4 +27,3 @@ void hm_print(HM *table, int all);
 unsigned long int mh_hash(const char *str);
 
 #endif
-

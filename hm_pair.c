@@ -12,7 +12,7 @@
 
 inline static timestamp_t _hm_pair_now();
 
-HMPair *hm_pair_create(const char*key, const char*val){
+hm_pair_t *hm_pair_create(const char*key, const char*val){
 	/*
 	In first version, we kept the character data inside the buffer,
 	and skipped the last \0 terminating character.
@@ -35,7 +35,7 @@ HMPair *hm_pair_create(const char*key, const char*val){
 	size_t keylen = strlen(key) + 1;
 	size_t vallen = strlen(val) + 1;
 
-	HMPair *pair = malloc( sizeof(HMPair) + keylen + vallen); // + 1
+	hm_pair_t *pair = malloc( sizeof(hm_pair_t) + keylen + vallen); // + 1
 
 	if (pair == NULL)
 		return NULL;
@@ -54,8 +54,8 @@ HMPair *hm_pair_create(const char*key, const char*val){
 	return pair;
 };
 
-inline HMPair *hm_pair_createx(const char*key, const char*val, uint32_t expires){
-	HMPair *pair = hm_pair_create(key, val);
+inline hm_pair_t *hm_pair_createx(const char*key, const char*val, uint32_t expires){
+	hm_pair_t *pair = hm_pair_create(key, val);
 
 	if (pair == NULL)
 		return NULL;
@@ -66,7 +66,7 @@ inline HMPair *hm_pair_createx(const char*key, const char*val, uint32_t expires)
 }
 
 /*
-inline int hm_pair_free(HMPair *pair){
+inline int hm_pair_free(hm_pair_t *pair){
 	// free() works on NULL
 	free(pair);
 
@@ -74,15 +74,15 @@ inline int hm_pair_free(HMPair *pair){
 }
 */
 
-inline const char *hm_pair_getkey(const HMPair *pair){
+inline const char *hm_pair_getkey(const hm_pair_t *pair){
 	return & pair->buffer[0];
 }
 
-inline const char *hm_pair_getval(const HMPair *pair){
+inline const char *hm_pair_getval(const hm_pair_t *pair){
 	return & pair->buffer[ pair->keylen ];
 }
 
-inline int hm_pair_equalkey(const HMPair *pair, const char *key){
+inline int hm_pair_equalkey(const hm_pair_t *pair, const char *key){
 	if (key == NULL)
 		return 0;
 
@@ -92,7 +92,7 @@ inline int hm_pair_equalkey(const HMPair *pair, const char *key){
 	return ! memcmp(& pair->buffer[0], key, pair->keylen);
 }
 
-inline int hm_pair_equalpair(const HMPair *pair1, const HMPair *pair2){
+inline int hm_pair_equalpair(const hm_pair_t *pair1, const hm_pair_t *pair2){
 	if (pair1 == NULL || pair2 == NULL)
 		return 0;
 
@@ -110,7 +110,7 @@ inline static timestamp_t _hm_pair_now(){
 	return tv.tv_sec * TIMESTAMP_MICROTIME_MULTIPLE + tv.tv_usec;
 }
 
-inline int hm_pair_valid(const HMPair *pair){
+inline int hm_pair_valid(const hm_pair_t *pair){
 	if (pair->expires)
 		return pair->created + pair->expires * TIMESTAMP_MICROTIME_MULTIPLE > _hm_pair_now();
 

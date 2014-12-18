@@ -5,19 +5,19 @@
 
 #include <stdint.h>
 
-int hm_list_exists(HMPair * const *bucket, const char *key);
+int hm_list_exists(hm_pair_t * const *bucket, const char *key);
 
-const HMPair *hm_list_get(HMPair * const *bucket, const char *key);
+const hm_pair_t *hm_list_get(hm_pair_t * const *bucket, const char *key);
 
-uint64_t hm_list_count(HMPair * const *bucket);
+uint64_t hm_list_count(hm_pair_t * const *bucket);
 
-int hm_list_put(HMPair **bucket, HMPair *newpair);
+int hm_list_put(hm_pair_t **bucket, hm_pair_t *newpair);
 
-int hm_list_remove(HMPair **bucket, const char *key);
+int hm_list_remove(hm_pair_t **bucket, const char *key);
 
-void hm_list_print(HMPair * const *bucket);
+void hm_list_print(hm_pair_t * const *bucket);
 
-int hm_list_free(HMPair **bucket);
+int hm_list_free(hm_pair_t **bucket);
 
 #endif
 

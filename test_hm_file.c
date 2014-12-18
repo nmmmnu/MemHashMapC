@@ -28,7 +28,7 @@ int main(int argc, char **argv){
 	printf("Load file\n");
 	processfile(table, filename, 0);
 
-	const HMPair *pair = hm_get(table, findkey);
+	const hm_pair_t *pair = hm_get(table, findkey);
 
 	if (pair == NULL)
 		printf("Key %s not found\n", findkey);
