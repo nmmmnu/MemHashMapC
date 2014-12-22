@@ -4,10 +4,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define MIN(a, b) (a) < (b) ? (a) : (b)
-
-
 #define TIMESTAMP_MICROTIME_MULTIPLE 1 * 1000 * 1000
+
+#define MAX_KEYSIZE	0xffff
+#define MAX_VALSIZE	0xffffffff
 
 
 inline static timestamp_t _hm_pair_now();
@@ -32,16 +32,19 @@ hm_pair_t *hm_pair_create(const char*key, const char*val){
 	if (key == NULL || val == NULL)
 		return NULL;
 
-	size_t keylen = strlen(key) + 1;
-	size_t vallen = strlen(val) + 1;
+	uint64_t keylen = strlen(key) + 1;
+	uint64_t vallen = strlen(val) + 1;
 
-	hm_pair_t *pair = malloc( sizeof(hm_pair_t) + keylen + vallen); // + 1
+	if (keylen >= MAX_KEYSIZE || vallen >= MAX_VALSIZE)
+		return NULL;
+
+	hm_pair_t *pair = malloc( sizeof(hm_pair_t) + keylen + vallen);
 
 	if (pair == NULL)
 		return NULL;
 
 	pair->next	= NULL;
-	pair->created	=  _hm_pair_now();
+	pair->created	= _hm_pair_now();
 	pair->keylen	= keylen;
 	pair->vallen	= vallen;
 
@@ -49,12 +52,10 @@ hm_pair_t *hm_pair_create(const char*key, const char*val){
 	memcpy(& pair->buffer[0     ], key, keylen);
 	memcpy(& pair->buffer[keylen], val, vallen);
 
-	//pair->buffer[keylen + vallen] = '\0';
-
 	return pair;
 };
 
-inline hm_pair_t *hm_pair_createx(const char*key, const char*val, uint32_t expires){
+hm_pair_t *hm_pair_createx(const char*key, const char*val, expires_t expires){
 	hm_pair_t *pair = hm_pair_create(key, val);
 
 	if (pair == NULL)
@@ -65,24 +66,15 @@ inline hm_pair_t *hm_pair_createx(const char*key, const char*val, uint32_t expir
 	return pair;
 }
 
-/*
-inline int hm_pair_free(hm_pair_t *pair){
-	// free() works on NULL
-	free(pair);
-
-	return 1;
-}
-*/
-
-inline const char *hm_pair_getkey(const hm_pair_t *pair){
+const char *hm_pair_getkey(const hm_pair_t *pair){
 	return & pair->buffer[0];
 }
 
-inline const char *hm_pair_getval(const hm_pair_t *pair){
+const char *hm_pair_getval(const hm_pair_t *pair){
 	return & pair->buffer[ pair->keylen ];
 }
 
-inline int hm_pair_equalkey(const hm_pair_t *pair, const char *key){
+int hm_pair_equalkey(const hm_pair_t *pair, const char *key){
 	if (key == NULL)
 		return 0;
 
@@ -92,7 +84,7 @@ inline int hm_pair_equalkey(const hm_pair_t *pair, const char *key){
 	return ! memcmp(& pair->buffer[0], key, pair->keylen);
 }
 
-inline int hm_pair_equalpair(const hm_pair_t *pair1, const hm_pair_t *pair2){
+int hm_pair_equalpair(const hm_pair_t *pair1, const hm_pair_t *pair2){
 	if (pair1 == NULL || pair2 == NULL)
 		return 0;
 
@@ -102,6 +94,15 @@ inline int hm_pair_equalpair(const hm_pair_t *pair1, const hm_pair_t *pair2){
 	return ! memcmp(& pair1->buffer[0], & pair2->buffer[0], pair1->keylen);
 }
 
+int hm_pair_valid(const hm_pair_t *pair){
+	if (! pair->expires)
+		return 1;
+
+	return pair->created + pair->expires * TIMESTAMP_MICROTIME_MULTIPLE > _hm_pair_now();
+}
+
+// ===============================================================
+
 inline static timestamp_t _hm_pair_now(){
 	struct timeval tv;
 
@@ -109,13 +110,3 @@ inline static timestamp_t _hm_pair_now(){
 
 	return tv.tv_sec * TIMESTAMP_MICROTIME_MULTIPLE + tv.tv_usec;
 }
-
-inline int hm_pair_valid(const hm_pair_t *pair){
-	if (pair->expires)
-		return pair->created + pair->expires * TIMESTAMP_MICROTIME_MULTIPLE > _hm_pair_now();
-
-	return 1;
-}
-
-
-

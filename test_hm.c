@@ -119,6 +119,11 @@ void hm_table_test(){
 	hm_put(table, hm_pair_create("age",	"5"		));
 	hm_put(table, hm_pair_create("lang",	"C/C++"		));
 	hm_put(table, hm_pair_create("os",	"Linux"		));
+	hm_put(table, hm_pair_create("hw",	"ASUS Zenbook"	));
+	hm_put(table, hm_pair_create("hw.cpu",	"i5"		));
+	hm_put(table, hm_pair_create("hw.ram",	"10 GB"		));
+	hm_put(table, hm_pair_create("hw.ssd",	"24 GB"		));
+	hm_put(table, hm_pair_create("hw.hdd",	"500 GB"	));
 
 	PRINTF_TEST("HM", "exists",	hm_exists(table, "name")		);
 	PRINTF_TEST("HM", "! exists",	! hm_exists(table, "computer")		);

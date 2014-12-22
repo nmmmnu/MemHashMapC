@@ -6,9 +6,10 @@
 
 #include <stdint.h>
 
+typedef uint64_t capacity_t;
 
-typedef struct{
-	uint64_t	capacity;	// 8
+typedef struct _HM_t{
+	capacity_t	capacity;	// 8
 	hm_pair_t	*buckets[];	// dynamic array of pointers to link lists
 } HM;
 
@@ -23,7 +24,5 @@ int hm_put(HM *table, hm_pair_t *pair);
 int hm_remove(HM *table, const char *key);
 
 void hm_print(HM *table, int all);
-
-unsigned long int mh_hash(const char *str);
 
 #endif

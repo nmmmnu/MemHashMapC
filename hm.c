@@ -8,7 +8,7 @@
 #define hash(a) hm_hash(a)
 
 // DJB Hash function from CDB
-unsigned long int hm_hash(const char *str){
+static unsigned long int hm_hash(const char *str){
 	unsigned long hash = 5381;
 
 	unsigned int c;
@@ -21,7 +21,7 @@ unsigned long int hm_hash(const char *str){
 }
 
 
-HM *hm_create(uint64_t capacity){
+HM *hm_create(capacity_t capacity){
 	HM *table = malloc(sizeof(HM) + sizeof(hm_pair_t *) * capacity);
 
 	if (table == NULL)
@@ -30,7 +30,7 @@ HM *hm_create(uint64_t capacity){
 	table->capacity = capacity;
 
 	/*
-	uint64_t i;
+	capacity_t i;
 	for(i = 0; i < capacity; i++){
 		table->buckets[i] = NULL;
 	}
@@ -43,7 +43,7 @@ HM *hm_create(uint64_t capacity){
 
 
 int hm_free(HM *table){
-	uint64_t i;
+	capacity_t i;
 	for(i = 0; i < table->capacity; i++){
 		hm_list_free( & table->buckets[i] );
 	}
@@ -54,7 +54,7 @@ int hm_free(HM *table){
 }
 
 
-inline uint64_t _hm_getbucketforkey(HM *table, const char *key){
+static inline capacity_t _hm_getbucketforkey(HM *table, const char *key){
 	if (key == NULL)
 		return 0;
 
@@ -66,7 +66,7 @@ int hm_exists(HM *table, const char *key){
 	if (key == 0)
 		return 0;
 
-	const uint64_t index = _hm_getbucketforkey(table, key);
+	const capacity_t index = _hm_getbucketforkey(table, key);
 
 	if (index == 0)
 		return 0;
@@ -81,7 +81,7 @@ const hm_pair_t *hm_get(HM *table, const char *key){
 	if (key == 0)
 		return NULL;
 
-	uint64_t index = _hm_getbucketforkey(table, key );
+	capacity_t index = _hm_getbucketforkey(table, key );
 
 	if (index == 0)
 		return NULL;
@@ -96,7 +96,7 @@ int hm_put(HM *table, hm_pair_t *pair){
 	if (pair == NULL)
 		return 0;
 
-	uint64_t index = _hm_getbucketforkey(table, hm_pair_getkey(pair) );
+	capacity_t index = _hm_getbucketforkey(table, hm_pair_getkey(pair) );
 
 	if (index == 0)
 		return 0;
@@ -107,6 +107,7 @@ int hm_put(HM *table, hm_pair_t *pair){
 		return 1;
 
 	free(pair);
+
 	return 0;
 }
 
@@ -115,7 +116,7 @@ int hm_remove(HM *table, const char *key){
 	if (key == NULL)
 		return 0;
 
-	uint64_t index = _hm_getbucketforkey(table, key);
+	capacity_t index = _hm_getbucketforkey(table, key);
 
 	if (index == 0)
 		return 0;
@@ -128,15 +129,15 @@ int hm_remove(HM *table, const char *key){
 
 void hm_print(HM *table, int all){
 	printf("\n");
-	printf("HM Table %p\n", table);
+	printf("HM Table @ %p\n", table);
 	printf("\n");
-	printf("Capacity = %" PRIu64 "\n", table->capacity);
+	printf("Capacity = %" PRIu64 "\n", (uint64_t) table->capacity);
 	printf("\n");
 
 	if (! all)
 		return;
 
-	uint64_t i;
+	capacity_t i;
 	for(i = 0; i < table->capacity; i++){
 		hm_list_print( & table->buckets[i] );
 	}
