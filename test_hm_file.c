@@ -47,7 +47,7 @@ int main(int argc, char **argv){
 
 	hm_free(table);
 
-	printf("Done... %p\n", table);
+	printf("Done...\n");
 
 	display_mallinfo();
 

@@ -51,63 +51,62 @@ void hm_pair_test(const int delay){
 
 
 void hm_list_test(){
-	hm_pair_t *bucket[1];
-	bucket[0] = NULL;
+	hm_pair_t *list_real = NULL;
+	hm_pair_t **list = & list_real;
 
-	hm_list_put(bucket, hm_pair_create("name",	"niki"		));
-	hm_list_put(bucket, hm_pair_create("age",	"5"		));
-	hm_list_put(bucket, hm_pair_create("lang",	"C/C++"		));
+	hm_list_put(list, hm_pair_create("name",	"niki"		));	// put element in empty list
+	hm_list_put(list, hm_pair_create("age",		"5"		));	// put as first element
+	hm_list_put(list, hm_pair_create("lang",	"C/C++"		));	// put as non first element
 
-	// must remove existing "age"
-	hm_list_put(bucket, hm_pair_create("age",	"8"		));
+	hm_list_put(list, hm_pair_create("age",	"8"			));	// must remove existing "age"
 
-	// must be placed in front of the list.
-	hm_list_put(bucket, hm_pair_create("first",	"list top"	));
+	hm_list_put(list, hm_pair_create("_first",	"list top"	));	// put as first element
 
-	PRINTF_TEST("HM List", "count",		hm_list_count(bucket) == 4			);
-	PRINTF_TEST("HM List", "exists",	hm_list_exists(bucket, "name")			);
-	PRINTF_TEST("HM List", "! exists",	! hm_list_exists(bucket, "computer")		);
+	PRINTF_TEST("HM List", "count",		hm_list_count(list) == 4			);
+	PRINTF_TEST("HM List", "exists",	hm_list_exists(list, "name")			);
+	PRINTF_TEST("HM List", "! exists",	! hm_list_exists(list, "computer")		);
 
-	PRINTF_TEST("HM List", "! get",		hm_list_get(bucket, "computer") == NULL		);
-	const hm_pair_t *pair = hm_list_get(bucket, "name");
+	PRINTF_TEST("HM List", "! get",		hm_list_get(list, "computer") == NULL		);
+
+	const hm_pair_t *pair = hm_list_get(list, "name");
 	PRINTF_TEST("HM List", "get",		hm_pair_equalkey(pair, "name")			);
 
-	hm_list_print(bucket);
+	hm_list_print(list);
 
-	hm_list_remove(bucket, NULL);
-	hm_list_remove(bucket, "computer");	// remove something not in the list
-	hm_list_remove(bucket, "first");	// remove first element of the list
-	hm_list_remove(bucket, "lang");		// remove non first element of the list
+	hm_list_remove(list, NULL	);
+	hm_list_remove(list, "computer"	);	// remove something not in the list
+	hm_list_remove(list, "_first"	);	// remove first element of the list
+	hm_list_remove(list, "lang"	);	// remove non first element of the list
 
-	PRINTF_TEST("HM List", "count",		hm_list_count(bucket) == 2			);
+	PRINTF_TEST("HM List", "count",		hm_list_count(list) == 2			);
 
-	hm_list_remove(bucket, "name");
-	hm_list_remove(bucket, "age");
+	hm_list_remove(list, "name"	);
+	hm_list_remove(list, "age"	);	// list must be empty now
 
-	PRINTF_TEST("HM List", "count",		hm_list_count(bucket) == 0			);
+	PRINTF_TEST("HM List", "count 0",	hm_list_count(list) == 0			);
 
 	// ==================================
 
 	hm_pair_t *eventual_pair =  hm_pair_create("ev_pair", "one");
-	hm_list_put(bucket, eventual_pair);
+	hm_list_put(list, eventual_pair);
 	eventual_pair->created += 3600 * 1000; // set time in the future
-	hm_list_put(bucket, hm_pair_create("ev_pair",	"two"	));
-	const hm_pair_t *eventual_pair2 = hm_list_get(bucket, "ev_pair");
+	hm_list_put(list, hm_pair_create("ev_pair",	"two"	));
+	const hm_pair_t *eventual_pair2 = hm_list_get(list, "ev_pair");
 	PRINTF_TEST("HM List", "eventual get",	strcmp(hm_pair_getval(eventual_pair2), "one") == 0	);
 
 	// ==================================
 
-	PRINTF_TEST("HM List", "free",		hm_list_free(bucket) 				);
-	PRINTF_TEST("HM List", "count",		hm_list_count(bucket) == 0			);
+	PRINTF_TEST("HM List", "free",		hm_list_free(list) 				);
+	PRINTF_TEST("HM List", "count",		hm_list_count(list) == 0			);
 
 	// add some more pairs to test hm_list_free() with data
-	hm_list_put(bucket, hm_pair_create("name",	"niki"	));
-	hm_list_put(bucket, hm_pair_create("age",	"5"	));
-	hm_list_put(bucket, hm_pair_create("lang",	"C/C++"	));
+	hm_list_put(list, hm_pair_create("name",	"niki"	));
+	hm_list_put(list, hm_pair_create("age",	"5"		));
+	hm_list_put(list, hm_pair_create("lang",	"C/C++"	));
 
 
-	PRINTF_TEST("HM List", "free",		hm_list_free(bucket)				);
-	PRINTF_TEST("HM List", "count",		hm_list_count(bucket) == 0			);
+	PRINTF_TEST("HM List", "free",		hm_list_free(list)				);
+	PRINTF_TEST("HM List", "count",		hm_list_count(list) == 0			);
 }
 
 

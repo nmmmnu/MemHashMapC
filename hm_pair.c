@@ -74,24 +74,37 @@ const char *hm_pair_getval(const hm_pair_t *pair){
 	return & pair->buffer[ pair->keylen ];
 }
 
-int hm_pair_equalkey(const hm_pair_t *pair, const char *key){
-	if (key == NULL)
-		return 0;
+static int _hm_cmp(const void *one, const void *two, keysize_t one_size, keysize_t two_size){
+	if (one_size == two_size)
+		return memcmp(one, two, one_size);
 
-	if (pair->keylen != strlen(key) + 1)
-		return 0;
+	keysize_t min_size = one_size < two_size ? one_size : two_size;
 
-	return ! memcmp(& pair->buffer[0], key, pair->keylen);
+	int x =  memcmp(one, two, min_size);
+
+	return x ? x : 1;
 }
 
-int hm_pair_equalpair(const hm_pair_t *pair1, const hm_pair_t *pair2){
+int hm_pair_cmpkey(const hm_pair_t *pair, const char *key){
+	if (key == NULL)
+		return 1;
+
+	return _hm_cmp(& pair->buffer[0], key, pair->keylen, strlen(key) + 1);
+}
+
+int hm_pair_cmppair(const hm_pair_t *pair1, const hm_pair_t *pair2){
 	if (pair1 == NULL || pair2 == NULL)
 		return 0;
 
-	if (pair1->keylen != pair2->keylen)
-		return 0;
+	return _hm_cmp(& pair1->buffer[0], & pair2->buffer[0], pair1->keylen, pair2->keylen);
+}
 
-	return ! memcmp(& pair1->buffer[0], & pair2->buffer[0], pair1->keylen);
+int hm_pair_equalkey(const hm_pair_t *pair, const char *key){
+	return ! hm_pair_cmpkey(pair, key);
+}
+
+int hm_pair_equalpair(const hm_pair_t *pair1, const hm_pair_t *pair2){
+	return ! hm_pair_cmppair(pair1, pair2);
 }
 
 int hm_pair_valid(const hm_pair_t *pair){

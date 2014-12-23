@@ -90,12 +90,34 @@ static int _hm_list_put_basic(hm_pair_t **head, hm_pair_t *newpair){
 	if (newpair == NULL)
 		return 0;
 
-	// do not check for duplicates at all...
+	const char *key = hm_pair_getkey(newpair);
 
-	// add at the beginning...
-	newpair->next = *head;
+	hm_pair_t *prev = NULL;
+	hm_pair_t *pair;
+	for(pair = *head; pair; pair = pair->next){
+		int cmp = hm_pair_cmpkey(pair, key);
 
-	*head = newpair;
+		/*
+		if (cmp == 0){
+			// handle delete somehow
+		}
+		*/
+
+		if (cmp >= 0)
+			break;
+
+		prev = pair;
+	}
+
+	// put new pair here...
+	if (prev){
+		// we are at the middle
+		newpair-> next = prev->next;
+		prev->next = newpair;
+	}else{
+		newpair->next = *head;
+		*head = newpair;
+	}
 
 	return 1;
 }
@@ -147,9 +169,13 @@ static const hm_pair_t *_hm_list_get_dumb(hm_pair_t * const *head, const char *k
 
 	const hm_pair_t *pair;
 	for(pair = *head; pair; pair = pair->next){
-		// Check if this is what we are looking for
-		if (hm_pair_equalkey(pair, key))
+		int cmp = hm_pair_cmpkey(pair, key);
+
+		if (cmp == 0)
 			return pair;
+
+		if (cmp > 0)
+			break;
 	}
 
 	return NULL;
@@ -180,8 +206,9 @@ static int _hm_list_remove_dumb(hm_pair_t **head, const char *key){
 	hm_pair_t *prev = NULL;
 	hm_pair_t *pair;
 	for(pair = *head; pair; pair = pair->next){
-		// Check if this is what we are looking for
-		if (hm_pair_equalkey(pair, key)){
+		int cmp = hm_pair_cmpkey(pair, key);
+
+		if (cmp == 0){
 			if (prev){
 				prev->next = pair->next;
 			}else{
@@ -193,6 +220,9 @@ static int _hm_list_remove_dumb(hm_pair_t **head, const char *key){
 
 			return 1;
 		}
+
+		if (cmp >= 0)
+			break;
 
 		prev = pair;
 	}
@@ -210,20 +240,8 @@ static int _hm_list_remove_eventual(hm_pair_t **head, const char *key){
  *
  */
 
-/*
+
 static uint64_t _hm_list_count_dumb(hm_pair_t * const *head){
-	uint64_t count = 0;
-
-	const hm_pair_t *pair;
-	for(pair = *head; pair; pair = pair->next){
-		count++;
-	}
-
-	return count;
-}
-*/
-
-static uint64_t _hm_list_count_eventual(hm_pair_t * const *head){
 	uint64_t count = 0;
 
 	const hm_pair_t *pair;
@@ -233,5 +251,10 @@ static uint64_t _hm_list_count_eventual(hm_pair_t * const *head){
 	}
 
 	return count;
+}
+
+
+static uint64_t _hm_list_count_eventual(hm_pair_t * const *head){
+	return _hm_list_count_dumb(head);
 }
 

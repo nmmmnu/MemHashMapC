@@ -27,6 +27,9 @@ hm_pair_t *hm_pair_createx(const char *key, const char *val, uint32_t expires);
 const char *hm_pair_getkey(const hm_pair_t *pair);
 const char *hm_pair_getval(const hm_pair_t *pair);
 
+int hm_pair_cmpkey(const hm_pair_t *pair, const char *key);
+int hm_pair_cmppair(const hm_pair_t *pair1, const hm_pair_t *pair2);
+
 int hm_pair_equalkey(const hm_pair_t *pair, const char *key);
 int hm_pair_equalpair(const hm_pair_t *pair1, const hm_pair_t *pair2);
 
